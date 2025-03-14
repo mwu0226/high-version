@@ -5,27 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品展示</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        #searchBox { margin-bottom: 20px; }
-        .product { border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 5px; }
-        .product img { max-width: 100%; height: auto; display: block; margin-top: 10px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        /* 主要优化：网格布局 */
+        #productList {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            justify-items: center;
+        }
+        .product {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            padding: 15px;
+            transition: transform 0.3s;
+        }
+        .product:hover {
+            transform: translateY(-5px);
+        }
+        .product img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* 确保图片尺寸统一 */
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        .product img:hover {
+            transform: scale(1.05);
+        }
+        .product h3 {
+            font-size: 18px;
+            color: #333;
+            margin: 10px 0;
+        }
+        .product p {
+            font-size: 14px;
+            color: #666;
+            text-align: left;
+            padding: 0 10px;
+        }
+        .category {
+            font-size: 14px;
+            color: #007BFF;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            input, select {
+                width: 80%;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <h1>商品列表</h1>
-    <input type="text" id="searchBox" placeholder="输入关键词搜索..." oninput="filterProducts()">
-    <select id="categoryFilter" onchange="filterProducts()">
-        <option value="">所有类别</option>
-        <option value="买家秀">买家秀</option>
-        <option value="莆田鞋">莆田鞋</option>
-        <option value="广顶级包">广顶级包</option>
-        <option value="辽高版包">辽高版包</option>
-        <option value="其他">其他</option>
-    </select>
-    <div id="productList"></div>
 
-    <script>
+<div class="container">
+    <h1>商品展示</h1>
+    <div class="controls">
+        <input type="text" id="searchBox" placeholder="输入关键词搜索..." oninput="filterProducts()">
+        <select id="categoryFilter" onchange="filterProducts()">
+            <option value="">所有类别</option>
+            <option value="买家秀">买家秀</option>
+            <option value="莆田鞋">莆田鞋</option>
+            <option value="广顶级包">广顶级包</option>
+            <option value="辽高版包">辽高版包</option>
+            <option value="其他">其他</option>
+        </select>
+    </div>
+    <div id="productList"></div>
+</div>
+
+<script>
     let allProducts = [];
     const repoName = window.location.hostname.includes("high-version") ? "high-version" : "special-offer";
 
@@ -100,12 +183,12 @@
 
             let imagesHTML = product.images.length > 0
                 ? product.images.map(img => `<img src="${img}" alt="商品图片">`).join("")
-                : "<p>图片加载中</p>";
+                : "<p>暂无图片</p>";
 
             div.innerHTML = `
                 <h3>${product.title}</h3>
-                <p>${marked.parse(product.body)}</p> <!-- 解析 Markdown -->
-                <b>分类:</b> ${product.category} <br>
+                <p>${marked.parse(product.body)}</p>
+                <span class="category">${product.category}</span>
                 ${imagesHTML}
             `;
             productList.appendChild(div);
@@ -127,6 +210,7 @@
     }
 
     fetchProducts();
-    </script>
+</script>
+
 </body>
 </html>
